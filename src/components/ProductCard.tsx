@@ -4,9 +4,8 @@ import Colors from '@/constants/Colors';
 import { Product } from '@/types';
 
 const ProductCard = ({ id, name, price, image }: Product) => {
-
     return (
-        <Link href={`/menu/${id}`} style={styles.link} asChild>
+        <Link href={{ pathname: "/menu/[id]", params: { id } }} style={styles.link} asChild>
             <Pressable style={styles.container}>
                 <Image
                     source={{ uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7HE8d6CHpgkSQUqUqkZbUFi_5N_LJ0FYeUA&s" }}
