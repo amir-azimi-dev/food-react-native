@@ -1,16 +1,139 @@
-import { View, Text } from 'react-native'
-import React from 'react'
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { useEffect, useState } from 'react'
+import { View, Text, StyleSheet, Image, Pressable, Button } from 'react-native'
+import { router, Stack, useLocalSearchParams } from 'expo-router';
+import products from "@/../assets/data/products";
+import { PizzaSize, Product as ProductType } from '@/types';
+
+const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
 
 const Product = () => {
     const { id }: { id: string } = useLocalSearchParams();
 
-    return (
-        <View>
-            <Stack.Screen options={{ title: `Product ${id}` }} />
-            <Text>Product Id: {id}</Text>
+    const [product, setProduct] = useState<ProductType | null>(null);
+    const [selectedSize, setSelectedSize] = useState<PizzaSize>("M");
+
+    useEffect(() => {
+        const targetProduct = products.find(product => product.id === parseInt(id));
+        targetProduct ? setProduct(targetProduct) : router.push("/menu");
+
+    }, [id]);
+
+    const addToCartHandler = (): void => {
+        alert(`${product?.name} added to cart. Size: ${selectedSize}`)
+    };
+
+    return product ? (
+        <View style={styles.container}>
+            <Stack.Screen options={{ title: product.name }} />
+
+            <Image
+                // source={image ? { uri: image } : require("@/../assets/images/pepperoni.jpeg")}
+                source={{ uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7HE8d6CHpgkSQUqUqkZbUFi_5N_LJ0FYeUA&s" }}
+                resizeMode="contain"
+                style={styles.productImage}
+            />
+
+            <Text style={styles.selectSize}>Select Size</Text>
+            <View style={styles.sizeContainer}>
+                {sizes.map(size => (
+                    <Pressable
+                        key={size}
+                        style={[
+                            styles.size,
+                            { backgroundColor: (selectedSize === size) ? "gainsboro" : "white" }
+                        ]}
+                        onPress={() => setSelectedSize(size)}
+                    >
+                        <Text
+                            style={[styles.sizeText, { color: (selectedSize === size) ? "#000" : "gray" }]}
+                        >
+                            {size}
+                        </Text>
+                    </Pressable>
+                ))}
+            </View>
+
+            <Text style={styles.price}>Price: ${product.price}</Text>
+            <Pressable style={styles.button} onPress={addToCartHandler}>
+                <Text style={styles.buttonText}>Add to Cart</Text>
+            </Pressable>
         </View>
-    )
+    ) : (
+        <View style={styles.container}>
+            <Stack.Screen options={{ title: "Unknown Product" }} />
+            <Text style={styles.notFound}>Product not found</Text>
+        </View>
+    );
 };
 
 export default Product;
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        paddingHorizontal: 10,
+        paddingVertical: 20,
+        backgroundColor: "#fff"
+    },
+
+    productImage: {
+        maxWidth: "100%",
+        aspectRatio: 1
+    },
+
+    selectSize: {
+        fontSize: 16,
+        fontWeight: "bold"
+    },
+
+    sizeContainer: {
+        flexDirection: "row",
+        justifyContent: "space-around",
+        alignItems: "center",
+        marginTop: 10,
+        marginBottom: "auto"
+    },
+
+    size: {
+        width: 50,
+        aspectRatio: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 10,
+        borderRadius: 25,
+    },
+
+    sizeText: {
+        fontSize: 20,
+        fontWeight: "bold"
+    },
+
+    price: {
+        fontSize: 18,
+        fontWeight: "bold"
+    },
+
+    button: {
+        paddingVertical: 10,
+        backgroundColor: "#0066ff",
+        borderRadius: 10
+    },
+
+    buttonText: {
+        textAlign: "center",
+        fontSize: 16,
+        fontWeight: "bold",
+        color: "#fff"
+    },
+
+    notFound: {
+        marginTop: 20,
+        paddingVertical: 10,
+        fontSize: 30,
+        fontWeight: "bold",
+        textAlign: "center",
+        backgroundColor: "#00aaff",
+        color: "#fff",
+        borderRadius: 10
+    }
+});
