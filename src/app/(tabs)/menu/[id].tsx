@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, Image, Pressable, Button } from 'react-native'
+import { View, Text, StyleSheet, Image, Pressable, Dimensions, useWindowDimensions } from 'react-native'
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import products from "@/../assets/data/products";
 import { PizzaSize, Product as ProductType } from '@/types';
+import { useShoppingCart } from '@/Providers/CartProvider';
 
 const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
 
@@ -12,6 +13,9 @@ const Product = () => {
     const [product, setProduct] = useState<ProductType | null>(null);
     const [selectedSize, setSelectedSize] = useState<PizzaSize>("M");
 
+    const { onAddToCart } = useShoppingCart();
+    const { height } = useWindowDimensions();
+
     useEffect(() => {
         const targetProduct = products.find(product => product.id === parseInt(id));
         targetProduct ? setProduct(targetProduct) : router.push("/menu");
@@ -19,6 +23,16 @@ const Product = () => {
     }, [id]);
 
     const addToCartHandler = (): void => {
+        if (!product) return;
+
+        const newItemData = {
+            id: (Date.now() + Math.random() * 1000).toFixed(0).toString(),
+            product,
+            quantity: 1,
+            sizes: [selectedSize]
+        };
+
+        onAddToCart(newItemData);
         alert(`${product?.name} added to cart. Size: ${selectedSize}`)
     };
 
@@ -30,8 +44,10 @@ const Product = () => {
                 // source={image ? { uri: image } : require("@/../assets/images/pepperoni.jpeg")}
                 source={{ uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7HE8d6CHpgkSQUqUqkZbUFi_5N_LJ0FYeUA&s" }}
                 resizeMode="contain"
-                style={styles.productImage}
+                style={[styles.productImage, { maxHeight: height / 2 }]}
             />
+
+            <Text style={styles.title}>{product.name}</Text>
 
             <Text style={styles.selectSize}>Select Size</Text>
             <View style={styles.sizeContainer}>
@@ -68,6 +84,7 @@ const Product = () => {
 
 export default Product;
 
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -77,20 +94,28 @@ const styles = StyleSheet.create({
     },
 
     productImage: {
-        maxWidth: "100%",
-        aspectRatio: 1
+        width: "100%",
+        maxHeight: Dimensions.get("window").height / 2,
+        aspectRatio: 1,
+        marginHorizontal: "auto"
+    },
+
+    title: {
+        fontSize: 24,
+        fontWeight: "bold",
+        marginTop: 20,
     },
 
     selectSize: {
         fontSize: 16,
-        fontWeight: "bold"
+        fontWeight: "bold",
+        marginVertical: 10
     },
 
     sizeContainer: {
         flexDirection: "row",
         justifyContent: "space-around",
         alignItems: "center",
-        marginTop: 10,
         marginBottom: "auto"
     },
 
@@ -110,7 +135,9 @@ const styles = StyleSheet.create({
 
     price: {
         fontSize: 18,
-        fontWeight: "bold"
+        fontWeight: "bold",
+        marginTop: 10,
+        marginBottom: 5
     },
 
     button: {
