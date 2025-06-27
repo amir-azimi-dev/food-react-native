@@ -1,41 +1,70 @@
-import { createContext, PropsWithChildren, useContext, useState } from "react";
+import { createContext, PropsWithChildren, useContext, useEffect, useState } from "react";
 import { CartItem } from "@/types";
+import { randomUUID } from "expo-crypto";
 
 export type CartContext = {
     items: CartItem[],
-    onAddToCart: (item: CartItem) => void
+    totalPrice: number,
+    onAddToCart: (item: CartItem) => void,
+    onUpdateQuantity: (cartItemId: string, count: -1 | 1) => void;
 };
 
-const ShoppingCartContext = createContext<CartContext>({ items: [], onAddToCart: item => { } });
+const ShoppingCartContext = createContext<CartContext>({
+    items: [],
+    totalPrice: 0,
+    onAddToCart: () => { },
+    onUpdateQuantity: () => { }
+});
 
 export const useShoppingCart = (): CartContext => useContext(ShoppingCartContext);
 
 const CartProvider = ({ children }: PropsWithChildren) => {
     const [items, setItems] = useState<CartItem[]>([]);
-    console.log(items);
+    const [totalPrice, setTotalPrice] = useState<number>(0);
 
+    useEffect(() => {
+        const totalPrice = items.reduce<number>((acc, currentItem) => acc + (currentItem.product.price * currentItem.quantity), 0);
+        setTotalPrice(totalPrice);
 
-    const onAddToCart = (item: CartItem) => {
+    }, [items]);
+
+    const onAddToCart = (newItem: CartItem) => {
         setItems(prevItems => {
-            const newProductId = item.product.id;
-            const targetItemIndex = prevItems.findIndex(item => newProductId === item.product.id);
+            const newProductId = newItem.product.id;
+            const targetItemIndex = prevItems.findIndex(item => (newProductId === item.product.id) && (newItem.size === item.size));
 
             if (targetItemIndex !== -1) {
                 const newShoppingCartItems = [...prevItems];
                 newShoppingCartItems[targetItemIndex].quantity++;
 
-                const newSizes = [...newShoppingCartItems[targetItemIndex].sizes, item.sizes[0]]
-                newShoppingCartItems[targetItemIndex].sizes = newSizes
-
                 return newShoppingCartItems;
             } else {
-                return [...prevItems, item];
+                return [...prevItems, { ...newItem, id: randomUUID() }];
             }
         });
     };
 
+    const onUpdateQuantity = (cartItemId: string, count: -1 | 1) => {
+        setItems(prevItems => {
+            let newShoppingCartItems = [...prevItems];
+
+            newShoppingCartItems.some(item => {
+                if (item.id === cartItemId) {
+                    const newQuantity = item.quantity + count;
+
+                    (newQuantity > 0) && (newQuantity < 11) && (item.quantity = newQuantity);
+                    (newQuantity <= 0) && (newShoppingCartItems = prevItems.filter(item => item.id !== cartItemId));
+
+                    return true;
+                }
+            })
+
+            return newShoppingCartItems;
+        });
+    };
+
     return (
-        <ShoppingCartContext.Provider value={{ items, onAddToCart }}>
+        <ShoppingCartContext.Provider value={{ items, totalPrice, onAddToCart, onUpdateQuantity }}>
             {children}
         </ShoppingCartContext.Provider>
     )

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, Image, Pressable, Dimensions, useWindowDimensions } from 'react-native'
-import { router, Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import products from "@/../assets/data/products";
 import { PizzaSize, Product as ProductType } from '@/types';
 import { useShoppingCart } from '@/Providers/CartProvider';
@@ -13,8 +13,9 @@ const Product = () => {
     const [product, setProduct] = useState<ProductType | null>(null);
     const [selectedSize, setSelectedSize] = useState<PizzaSize>("M");
 
-    const { onAddToCart } = useShoppingCart();
     const { height } = useWindowDimensions();
+    const { onAddToCart } = useShoppingCart();
+    const router = useRouter();
 
     useEffect(() => {
         const targetProduct = products.find(product => product.id === parseInt(id));
@@ -26,14 +27,14 @@ const Product = () => {
         if (!product) return;
 
         const newItemData = {
-            id: (Date.now() + Math.random() * 1000).toFixed(0).toString(),
+            id: "",
             product,
             quantity: 1,
-            sizes: [selectedSize]
+            size: selectedSize
         };
 
         onAddToCart(newItemData);
-        alert(`${product?.name} added to cart. Size: ${selectedSize}`)
+        router.push("/cart");
     };
 
     return product ? (
@@ -161,6 +162,6 @@ const styles = StyleSheet.create({
         textAlign: "center",
         backgroundColor: "#00aaff",
         color: "#fff",
-        borderRadius: 10
+        borderRadius: 8
     }
 });

@@ -31,6 +31,8 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         padding: 20,
         borderRadius: 15,
+        borderColor: "#00000011",
+        borderWidth: 1,
         boxShadow: "4px 4px 7px #0000002a"
     },
     image: {

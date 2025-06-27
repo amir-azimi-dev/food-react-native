@@ -27,14 +27,12 @@ const HeaderRight = () => {
 };
 
 const MenuStack = () => {
-
     return (
-        <Stack>
+        <Stack screenOptions={{headerRight: HeaderRight}}>
             <Stack.Screen
                 name="index"
                 options={{
                     title: "Menu",
-                    headerRight: HeaderRight
                 }}
             />
         </Stack>
