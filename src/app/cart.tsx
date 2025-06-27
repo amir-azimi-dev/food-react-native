@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { View, Text, Platform, StyleSheet, FlatList, Pressable } from 'react-native'
 import { StatusBar } from 'expo-status-bar';
 import { useShoppingCart } from '@/Providers/CartProvider';

@@ -15,7 +15,7 @@ const CartItem = ({ data }: { data: CartItemType }) => {
 
     const showProductDetailsHandler = () => {
         navigation.goBack();
-        router.push(`/menu/${data.product.id}`);
+        router.push(`/(user)/menu/${data.product.id}`);
     };
 
     return (
