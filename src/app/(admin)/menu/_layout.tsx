@@ -4,7 +4,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 
-const HeaderRight = (iconName: "plus" | "edit", target: "/(admin)/menu" | "/cart") => {
+const HeaderRight = (iconName: "plus" | "edit", target: "/(admin)/menu" | "/(admin)/menu/create") => {
     const colorScheme = useColorScheme();
 
     return (
@@ -33,15 +33,19 @@ const MenuStack = () => {
                 name="index"
                 options={{
                     title: "Menu",
-                    headerRight: () => HeaderRight("plus", "/(admin)/menu")
+                    headerRight: () => HeaderRight("plus", "/(admin)/menu/create")
                 }}
             />
             <Stack.Screen
                 name="[id]"
                 options={{
                     title: "Menu",
-                    headerRight: () => HeaderRight("edit", "/cart")
+                    headerRight: () => HeaderRight("edit", "/(admin)/menu/create")
                 }}
+            />
+            <Stack.Screen
+                name="create"
+                options={{ title: "Create a Product" }}
             />
         </Stack>
     );
