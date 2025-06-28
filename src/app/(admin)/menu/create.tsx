@@ -1,15 +1,33 @@
-import { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Pressable, Image, useWindowDimensions } from 'react-native'
+import { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TextInput, Pressable, Image, useWindowDimensions, Alert } from 'react-native'
+import { Stack, useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import Colors from '@/constants/Colors';
 import { launchImageLibraryAsync } from 'expo-image-picker';
+import products from '@/../assets/data/products';
 
 const CreateProduct = () => {
+    const { id: productId }: { id: string } = useLocalSearchParams();
+
     const [image, setImage] = useState<string | null>(null);
     const [name, setName] = useState<string>("");
     const [price, setPrice] = useState<string>("");
     const [errors, setErrors] = useState<string[]>([]);
 
     const { height } = useWindowDimensions();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!productId) return;
+
+        const targetProduct = products.find(product => product.id === parseInt(productId));
+        if (!targetProduct) return router.push("/(admin)/menu");
+
+        // setImage(targetProduct.image);
+        setName(targetProduct.name);
+        setPrice(targetProduct.price.toString());
+
+    }, [productId]);
 
     const pickImage = async () => {
         let result = await launchImageLibraryAsync({
@@ -22,12 +40,25 @@ const CreateProduct = () => {
         !result.canceled && setImage(result.assets[0].uri);
     }
 
+    const submitFormHandler = () => productId ? updateProductHandler() : createProductHandler();
+
+    const updateProductHandler = () => {
+        const isFormValid = validateForm();
+        if (!isFormValid) return;
+
+        alert("Product modified successfully.")
+
+        router.back();
+        resetForm();
+    };
+
     const createProductHandler = () => {
         const isFormValid = validateForm();
         if (!isFormValid) return;
 
         alert("Product created successfully.")
 
+        router.back();
         resetForm();
     };
 
@@ -47,6 +78,28 @@ const CreateProduct = () => {
         return isFormValid;
     };
 
+    const removeProductHandler = (): void => {
+        Alert.alert(
+            "Remove Product",
+            "Are you sure you want to remove this product?",
+            [
+                { text: "Cancel" },
+                {
+                    text: "Delete",
+                    style: "destructive",
+                    onPress: () => removeProduct()
+
+                }
+            ]
+        );
+    };
+
+    const removeProduct = () => {
+        alert("Product removed successfully.")
+
+        router.push("/(admin)/menu");
+    };
+
     const resetForm = (): void => {
         setName("");
         setPrice("");
@@ -54,6 +107,10 @@ const CreateProduct = () => {
 
     return (
         <View style={styles.container}>
+            <Stack.Screen
+                options={{ title: productId ? "Edit Product" : "Create a Product" }}
+            />
+
             <Image
                 source={{ uri: image || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7HE8d6CHpgkSQUqUqkZbUFi_5N_LJ0FYeUA&s" }}
                 style={[styles.image, { maxHeight: height / 3 }]}
@@ -88,9 +145,11 @@ const CreateProduct = () => {
                 </View>
             )}
 
-            <Pressable style={styles.button} onPress={createProductHandler}>
-                <Text style={styles.buttonText}>Create Product</Text>
+            <Pressable style={styles.button} onPress={submitFormHandler}>
+                <Text style={styles.buttonText}>{productId ? "Edit Product" : "Create Product"}</Text>
             </Pressable>
+
+            {productId && <Text style={[styles.buttonText, styles.removeButtonText]} onPress={removeProductHandler}>Delete</Text>}
         </View>
     )
 };
@@ -159,4 +218,10 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: "#fff"
     },
+
+    removeButtonText: {
+        marginTop: 10,
+        color: "#ff2222",
+        fontWeight: 500
+    }
 });

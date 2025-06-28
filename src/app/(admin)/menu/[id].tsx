@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, Image, Pressable, Dimensions, useWindowDimensions } from 'react-native'
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { Link, Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import products from "@/../assets/data/products";
 import { PizzaSize, Product as ProductType } from '@/types';
 import { useShoppingCart } from '@/Providers/CartProvider';
+import AdminHeaderRight from '@/components/AdminHeaderRight';
 
-const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
 
 const Product = () => {
     const { id }: { id: string } = useLocalSearchParams();
@@ -39,8 +39,12 @@ const Product = () => {
 
     return product ? (
         <View style={styles.container}>
-            <Stack.Screen options={{ title: product.name }} />
-
+            <Stack.Screen
+                options={{
+                    title: product.name,
+                    headerRight: () => AdminHeaderRight("edit", `/create?id=${id}`)
+                }}
+            />
             <Image
                 // source={image ? { uri: image } : require("@/../assets/images/pepperoni.jpeg")}
                 source={{ uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7HE8d6CHpgkSQUqUqkZbUFi_5N_LJ0FYeUA&s" }}

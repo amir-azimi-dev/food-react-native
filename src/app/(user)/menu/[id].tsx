@@ -19,7 +19,7 @@ const Product = () => {
 
     useEffect(() => {
         const targetProduct = products.find(product => product.id === parseInt(id));
-        targetProduct ? setProduct(targetProduct) : router.push("/menu");
+        targetProduct ? setProduct(targetProduct) : router.push("/(user)/menu");
 
     }, [id]);
 
