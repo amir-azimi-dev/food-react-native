@@ -28,11 +28,11 @@ const HeaderRight = () => {
 
 const MenuStack = () => {
     return (
-        <Stack screenOptions={{headerRight: HeaderRight}}>
+        <Stack screenOptions={{ headerRight: HeaderRight }}>
             <Stack.Screen
                 name="index"
                 options={{
-                    title: "Menu",
+                    title: "Menu"
                 }}
             />
         </Stack>
