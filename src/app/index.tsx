@@ -15,6 +15,11 @@ const index = () => {
                     <Text style={styles.buttonText}>Admin</Text>
                 </Pressable>
             </Link>
+            <Link href={'/(auth)/signIn'} asChild>
+                <Pressable style={styles.button}>
+                    <Text style={styles.buttonText}>Sign In/Up</Text>
+                </Pressable>
+            </Link>
         </View>
     );
 };

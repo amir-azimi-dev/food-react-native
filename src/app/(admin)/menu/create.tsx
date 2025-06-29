@@ -120,7 +120,7 @@ const CreateProduct = () => {
             <View style={styles.inputContainer}>
                 <Text style={styles.label}>title</Text>
                 <TextInput
-                    placeholder="Peperoni ..."
+                    placeholder="Peperoni"
                     style={styles.input}
                     value={name}
                     onChangeText={setName}
@@ -131,7 +131,7 @@ const CreateProduct = () => {
                 <TextInput
                     style={styles.input}
                     keyboardType="numeric"
-                    placeholder="9.9 ..."
+                    placeholder="9.9"
                     value={price}
                     onChangeText={setPrice}
                 />
