@@ -1,23 +1,32 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Pressable } from 'react-native'
+import { View, Text, StyleSheet, TextInput, Pressable, Alert } from 'react-native'
 import { useRouter } from 'expo-router';
 import Colors from '@/constants/Colors';
+import { supabase } from '@/libs/supabase';
 
 const signUp = () => {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [errors, setErrors] = useState<string[]>([]);
 
     const router = useRouter();
 
-    const signUpHandler = () => {
+    const signUpHandler = async () => {
+        if (isLoading) return;
+
         const isFormValid = validateForm();
         if (!isFormValid) return;
 
-        alert("You signed up successfully.")
+        setIsLoading(true);
+        const { data: { session, user }, error } = await supabase.auth.signUp({ email, password });
+        setIsLoading(false);
 
-        // router.back();
+        if (error) return Alert.alert("Error", error.message, [{ text: "ok" }]);
+
+        alert("You signed up successfully.")
         resetForm();
+        setTimeout(() => router.replace("/"), 50);
     };
 
     const validateForm = (): boolean => {
@@ -74,8 +83,8 @@ const signUp = () => {
                 </View>
             )}
 
-            <Pressable style={styles.button} onPress={signUpHandler}>
-                <Text style={styles.buttonText}>Sign Up</Text>
+            <Pressable style={[styles.button, { opacity: isLoading ? 0.4 : 1 }]} onPress={signUpHandler}>
+                <Text style={styles.buttonText}>{isLoading ? "Signing up ..." : "Sign Up"}</Text>
             </Pressable>
 
             <Text style={styles.linkText}>

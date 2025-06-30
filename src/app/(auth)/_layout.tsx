@@ -1,8 +1,14 @@
-import React from 'react'
-import { Stack } from 'expo-router';
+import { Redirect, Stack } from 'expo-router';
+import { useAuth } from '@/Providers/AuthProvider';
+import { ActivityIndicator } from 'react-native';
 
 
 const AuthStack = () => {
+    const { session, isLoading } = useAuth();
+    
+    if (!isLoading && session) return <Redirect href="/" />;
+    if (isLoading) return <ActivityIndicator style={{ flex: 1 }} />
+
     return (
         <Stack>
             <Stack.Screen

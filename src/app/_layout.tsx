@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { useColorScheme } from '@/components/useColorScheme';
 import CartProvider from '@/Providers/CartProvider';
+import AuthProvider from '@/Providers/AuthProvider';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -50,15 +51,17 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <CartProvider>
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          <Stack.Screen name="(user)" options={{ headerShown: false }} />
-          <Stack.Screen name="(admin)" options={{ headerShown: false }} />
-          <Stack.Screen name="cart" options={{ presentation: 'modal' }} />
-        </Stack>
-      </CartProvider>
+      <AuthProvider>
+        <CartProvider>
+          <Stack>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+            <Stack.Screen name="(user)" options={{ headerShown: false }} />
+            <Stack.Screen name="(admin)" options={{ headerShown: false }} />
+            <Stack.Screen name="cart" options={{ presentation: 'modal' }} />
+          </Stack>
+        </CartProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
