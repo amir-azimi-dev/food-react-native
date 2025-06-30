@@ -77,7 +77,7 @@ const orders: Order[] = [
         quantity: 1,
         product_id: products[8].id,
         product: products[8],
-      },
+      }
     ],
   },
 ];

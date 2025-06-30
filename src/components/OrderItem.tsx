@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native'
-import { Link } from 'expo-router';
+import { Link, useSegments } from 'expo-router';
 import { Order } from '@/types';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -7,8 +7,11 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
 const OrderItem = ({ id, created_at, status }: Order) => {
+    const segment = useSegments();
+    const currentMode = segment[0] as "(user)" | "(admin)";
+
     return (
-        <Link href={{ pathname: "/(user)/orders/[id]", params: { id } }} asChild>
+        <Link href={{ pathname: `/${currentMode}/orders/[id]`, params: { id } }} asChild>
             <Pressable style={styles.container}>
                 <View>
                     <Text style={styles.title}>Order #{id}</Text>

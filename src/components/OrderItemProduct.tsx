@@ -1,17 +1,20 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, Pressable } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useSegments } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
 import Colors from "../constants/Colors";
 import { OrderItem } from "../types";
 
 const OrderItemProduct = ({ data }: { data: OrderItem }) => {
+    const segment = useSegments();
+    const currentMode = segment[0] as "(user)" | "(admin)";
+
     const router = useRouter();
     const navigation = useNavigation();
 
     const showProductDetailsHandler = () => {
         navigation.goBack();
-        router.push(`/(user)/menu/${data.product_id}`);
+        router.push(`/${currentMode}/menu/${data.product_id}`);
     };
 
     return (
