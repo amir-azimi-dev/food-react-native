@@ -1,27 +1,22 @@
-import { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, Image, Pressable, Dimensions, useWindowDimensions } from 'react-native'
+import { useState } from 'react'
+import { View, Text, StyleSheet, Image, Pressable, Dimensions, useWindowDimensions, ActivityIndicator } from 'react-native'
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import products from "@/../assets/data/products";
-import { PizzaSize, Product as ProductType } from '@/types';
+import { PizzaSize } from '@/types';
 import { useShoppingCart } from '@/Providers/CartProvider';
+import useUserSingleProduct from '@/hooks/useUserSingleProduct';
 
 const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
 
 const Product = () => {
     const { id }: { id: string } = useLocalSearchParams();
 
-    const [product, setProduct] = useState<ProductType | null>(null);
     const [selectedSize, setSelectedSize] = useState<PizzaSize>("M");
+    const { data: product, error, isLoading } = useUserSingleProduct(id);
 
     const { height } = useWindowDimensions();
     const { onAddToCart } = useShoppingCart();
     const router = useRouter();
 
-    useEffect(() => {
-        const targetProduct = products.find(product => product.id === parseInt(id));
-        targetProduct ? setProduct(targetProduct) : router.push("/(user)/menu");
-
-    }, [id]);
 
     const addToCartHandler = (): void => {
         if (!product) return;
@@ -36,6 +31,14 @@ const Product = () => {
         onAddToCart(newItemData);
         router.push("/cart");
     };
+
+    if (isLoading) return <ActivityIndicator style={{ flex: 1 }} />;
+    
+    if (error) return (
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <Text style={{ fontSize: 20, fontWeight: "bold" }}>Failed to fetch!</Text>
+        </View>
+    );
 
     return product ? (
         <View style={styles.container}>

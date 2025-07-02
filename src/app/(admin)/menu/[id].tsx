@@ -1,41 +1,23 @@
-import { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, Image, Pressable, Dimensions, useWindowDimensions } from 'react-native'
-import { Link, Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import products from "@/../assets/data/products";
-import { PizzaSize, Product as ProductType } from '@/types';
-import { useShoppingCart } from '@/Providers/CartProvider';
+import { View, Text, StyleSheet, Image, Dimensions, useWindowDimensions, ActivityIndicator } from 'react-native'
+import { Stack, useLocalSearchParams } from 'expo-router';
 import AdminHeaderRight from '@/components/AdminHeaderRight';
+import useAdminSingleProduct from '@/hooks/useAdminSingleProduct';
 
 
 const Product = () => {
     const { id }: { id: string } = useLocalSearchParams();
-
-    const [product, setProduct] = useState<ProductType | null>(null);
-    const [selectedSize, setSelectedSize] = useState<PizzaSize>("M");
-
     const { height } = useWindowDimensions();
-    const { onAddToCart } = useShoppingCart();
-    const router = useRouter();
 
-    useEffect(() => {
-        const targetProduct = products.find(product => product.id === parseInt(id));
-        targetProduct ? setProduct(targetProduct) : router.push("/menu");
+    const { data: product, error, isLoading } = useAdminSingleProduct(id);
 
-    }, [id]);
+    if (isLoading) return <ActivityIndicator style={{ flex: 1 }} />;
+    
+    if (error) return (
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <Text style={{ fontSize: 20, fontWeight: "bold" }}>Failed to fetch!</Text>
+        </View>
+    );
 
-    const addToCartHandler = (): void => {
-        if (!product) return;
-
-        const newItemData = {
-            id: "",
-            product,
-            quantity: 1,
-            size: selectedSize
-        };
-
-        onAddToCart(newItemData);
-        router.push("/cart");
-    };
 
     return product ? (
         <View style={styles.container}>
