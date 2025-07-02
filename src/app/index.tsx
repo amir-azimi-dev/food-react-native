@@ -6,8 +6,7 @@ import { supabase } from "@/libs/supabase";
 
 const index = () => {
     const [isSigningOt, setIsSigningOut] = useState<boolean>(false);
-    const { session, isLoading } = useAuth();
-
+    const { session, userRole, isLoading } = useAuth();
 
     const signOutHandler = async () => {
         setIsSigningOut(true);
@@ -19,8 +18,10 @@ const index = () => {
         alert("You signed out successfully.");
     };
 
-    if (!isLoading && !session) return <Redirect href="/signIn" />;
     if (isLoading) return <ActivityIndicator style={{ flex: 1 }} />
+
+    if (!session) return <Redirect href="/signIn" />;
+    if (userRole !== "ADMIN") return <Redirect href="/(user)/menu" />;
 
     return (
         <View style={styles.container}>
@@ -32,11 +33,6 @@ const index = () => {
             <Link href={"/(admin)/menu"} asChild>
                 <Pressable style={styles.button}>
                     <Text style={styles.buttonText}>Admin</Text>
-                </Pressable>
-            </Link>
-            <Link href={"/(auth)/signIn"} asChild>
-                <Pressable style={styles.button}>
-                    <Text style={styles.buttonText}>Sign In/Up</Text>
                 </Pressable>
             </Link>
             <Pressable

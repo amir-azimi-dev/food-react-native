@@ -1,10 +1,9 @@
-import React from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Redirect, Tabs } from "expo-router";
-
 import Colors from "@/constants/Colors";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
 import { useAuth } from "@/Providers/AuthProvider";
+import { ActivityIndicator } from "react-native";
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
@@ -14,9 +13,10 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
-  const { session, isLoading } = useAuth();
+  const { session, userRole, isLoading } = useAuth();
 
-  if (!isLoading && session) return <Redirect href="/" />;
+  if (isLoading) return <ActivityIndicator style={{ flex: 1 }} />;
+  if (!isLoading && (!session || userRole !== "ADMIN")) return <Redirect href={"/(auth)/signIn"} />;
 
   return (
     <Tabs

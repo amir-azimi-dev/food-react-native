@@ -6,8 +6,8 @@ import { ActivityIndicator } from 'react-native';
 const AuthStack = () => {
     const { session, isLoading } = useAuth();
     
-    if (!isLoading && session) return <Redirect href="/" />;
     if (isLoading) return <ActivityIndicator style={{ flex: 1 }} />
+    if (!isLoading && session) return <Redirect href="/" />;
 
     return (
         <Stack>
