@@ -4,30 +4,36 @@ import { Stack, useRouter } from 'expo-router';
 import { useLocalSearchParams } from 'expo-router';
 import Colors from '@/constants/Colors';
 import { launchImageLibraryAsync } from 'expo-image-picker';
-import products from '@/../assets/data/products';
+import useCreateProduct from '@/hooks/useCreateProduct';
+import useEditProduct from '@/hooks/useEditProduct';
+import useAdminSingleProduct from '@/hooks/useAdminSingleProduct';
+import useDeleteProduct from '@/hooks/useDeleteProduct';
 
 const CreateProduct = () => {
     const { id: productId }: { id: string } = useLocalSearchParams();
 
+    const [isMutating, setIsMutating] = useState<boolean>(false);
     const [image, setImage] = useState<string | null>(null);
     const [name, setName] = useState<string>("");
     const [price, setPrice] = useState<string>("");
     const [errors, setErrors] = useState<string[]>([]);
 
+    const { data: targetProduct } = useAdminSingleProduct(productId);
+    const { mutate: createProduct } = useCreateProduct();
+    const { mutate: editProduct } = useEditProduct();
+    const { mutate: deleteProduct } = useDeleteProduct();
+
     const { height } = useWindowDimensions();
     const router = useRouter();
 
     useEffect(() => {
-        if (!productId) return;
+        if (!targetProduct) return;
 
-        const targetProduct = products.find(product => product.id === parseInt(productId));
-        if (!targetProduct) return router.push("/(admin)/menu");
-
-        // setImage(targetProduct.image);
+        setImage(targetProduct.image);
         setName(targetProduct.name);
         setPrice(targetProduct.price.toString());
 
-    }, [productId]);
+    }, [targetProduct]);
 
     const pickImage = async () => {
         let result = await launchImageLibraryAsync({
@@ -42,24 +48,52 @@ const CreateProduct = () => {
 
     const submitFormHandler = () => productId ? updateProductHandler() : createProductHandler();
 
-    const updateProductHandler = () => {
+    const createProductHandler = () => {
+        if (isMutating) return;
+
         const isFormValid = validateForm();
         if (!isFormValid) return;
 
-        alert("Product modified successfully.")
+        setIsMutating(true);
 
-        router.back();
-        resetForm();
+        createProduct(
+            { name, price: parseFloat(price), image },
+            {
+                onSuccess: () => {
+                    alert("Product created successfully.");
+                    router.back();
+                    resetForm();
+                },
+                onError: () => {
+                    setIsMutating(false);
+                    alert("Error while creating product.");
+                }
+            }
+        );
     };
 
-    const createProductHandler = () => {
+    const updateProductHandler = () => {
+        if (isMutating) return;
+
         const isFormValid = validateForm();
         if (!isFormValid) return;
 
-        alert("Product created successfully.")
+        setIsMutating(true);
 
-        router.back();
-        resetForm();
+        editProduct(
+            { id: productId, name, price: parseFloat(price), image },
+            {
+                onSuccess: () => {
+                    alert("Product modified successfully.");
+                    router.back();
+                    resetForm();
+                },
+                onError: () => {
+                    setIsMutating(true);
+                    alert("Error while modifying product.");
+                }
+            }
+        );
     };
 
     const validateForm = (): boolean => {
@@ -79,6 +113,8 @@ const CreateProduct = () => {
     };
 
     const removeProductHandler = (): void => {
+        if (isMutating) return;
+
         Alert.alert(
             "Remove Product",
             "Are you sure you want to remove this product?",
@@ -95,9 +131,22 @@ const CreateProduct = () => {
     };
 
     const removeProduct = () => {
-        alert("Product removed successfully.")
+        setIsMutating(true);
 
-        router.push("/(admin)/menu");
+        deleteProduct(
+            { id: productId },
+            {
+                onSuccess: () => {
+                    alert("Product removed successfully.");
+                    router.replace("/(admin)/menu");
+                    resetForm();
+                },
+                onError: () => {
+                    setIsMutating(true);
+                    alert("Error while removing product.");
+                }
+            }
+        );
     };
 
     const resetForm = (): void => {
@@ -145,12 +194,17 @@ const CreateProduct = () => {
                 </View>
             )}
 
-            <Pressable style={styles.button} onPress={submitFormHandler}>
-                <Text style={styles.buttonText}>{productId ? "Edit Product" : "Create Product"}</Text>
+            <Pressable style={[styles.button, { opacity: isMutating ? 0.4 : 1 }]} onPress={submitFormHandler}>
+                {isMutating ? (
+                    <Text style={styles.buttonText}>{productId ? "Editing Product ..." : "Creating Product ..."}</Text>
+
+                ) : (
+                    <Text style={styles.buttonText}>{productId ? "Edit Product" : "Create Product"}</Text>
+                )}
             </Pressable>
 
-            {productId && <Text style={[styles.buttonText, styles.removeButtonText]} onPress={removeProductHandler}>Delete</Text>}
-        </View>
+            {productId && <Text style={[styles.buttonText, styles.removeButtonText, { opacity: isMutating ? 0.4 : 1 }]} onPress={removeProductHandler}>Delete</Text>}
+        </View >
     )
 };
 

@@ -33,7 +33,7 @@ const Product = () => {
     };
 
     if (isLoading) return <ActivityIndicator style={{ flex: 1 }} />;
-    
+
     if (error) return (
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
             <Text style={{ fontSize: 20, fontWeight: "bold" }}>Failed to fetch!</Text>

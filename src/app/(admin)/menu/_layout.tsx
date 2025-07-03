@@ -11,6 +11,12 @@ const MenuStack = () => {
                     headerRight: () => AdminHeaderRight("plus", "/create")
                 }}
             />
+            <Stack.Screen
+                name="[id]"
+                options={{
+                    title: "Loading ...",
+                }}
+            />
         </Stack>
     );
 };
