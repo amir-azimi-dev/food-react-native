@@ -8,7 +8,7 @@ const Product = () => {
     const { id }: { id: string } = useLocalSearchParams();
     const { height } = useWindowDimensions();
 
-    const { data: product, error, isLoading } = useAdminSingleProduct(id);
+    const { data: product, error, isLoading } = useAdminSingleProduct(parseInt(id));
 
     if (isLoading) return <ActivityIndicator style={{ flex: 1 }} />;
 

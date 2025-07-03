@@ -11,7 +11,7 @@ const Product = () => {
     const { id }: { id: string } = useLocalSearchParams();
 
     const [selectedSize, setSelectedSize] = useState<PizzaSize>("M");
-    const { data: product, error, isLoading } = useUserSingleProduct(id);
+    const { data: product, error, isLoading } = useUserSingleProduct(parseInt(id));
 
     const { height } = useWindowDimensions();
     const { onAddToCart } = useShoppingCart();

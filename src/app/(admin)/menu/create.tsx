@@ -18,7 +18,7 @@ const CreateProduct = () => {
     const [price, setPrice] = useState<string>("");
     const [errors, setErrors] = useState<string[]>([]);
 
-    const { data: targetProduct } = useAdminSingleProduct(productId);
+    const { data: targetProduct } = useAdminSingleProduct(parseInt(productId));
     const { mutate: createProduct } = useCreateProduct();
     const { mutate: editProduct } = useEditProduct();
     const { mutate: deleteProduct } = useDeleteProduct();
@@ -81,7 +81,7 @@ const CreateProduct = () => {
         setIsMutating(true);
 
         editProduct(
-            { id: productId, name, price: parseFloat(price), image },
+            { id: parseInt(productId), name, price: parseFloat(price), image },
             {
                 onSuccess: () => {
                     alert("Product modified successfully.");
@@ -134,7 +134,7 @@ const CreateProduct = () => {
         setIsMutating(true);
 
         deleteProduct(
-            { id: productId },
+            { id: parseInt(productId) },
             {
                 onSuccess: () => {
                     alert("Product removed successfully.");

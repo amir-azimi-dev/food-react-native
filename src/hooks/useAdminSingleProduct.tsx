@@ -1,7 +1,7 @@
 import { supabase } from '@/libs/supabase';
 import { useQuery } from '@tanstack/react-query';
 
-const useAdminSingleProduct = (id: string) => {
+const useAdminSingleProduct = (id: number) => {
     return useQuery({
         queryKey: ["admin-product", id],
         queryFn: async () => {

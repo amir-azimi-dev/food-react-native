@@ -1,3 +1,5 @@
+import { Database } from "./supabaseTypes";
+
 export type Product = {
   id: number;
   image: string | null;
@@ -39,3 +41,9 @@ export type Profile = {
   id: string;
   group: string;
 };
+
+export type Tables<T extends keyof Database['public']['Tables']> =
+  Database['public']['Tables'][T]['Row'];
+
+export type Enums<T extends keyof Database['public']['Enums']> =
+  Database['public']['Enums'][T];

@@ -6,7 +6,7 @@ const useEditProduct = () => {
     const client = useQueryClient();
 
     return useMutation({
-        mutationFn: async ({ id, name, price, image }: Omit<Product, "id"> & { id: string }) => {
+        mutationFn: async ({ id, name, price, image }: Product) => {
             const { data, error } = await supabase.from("products").update({ name, price, image }).eq("id", id).select("*").single();
             if (error) throw new Error(error.message);
             return data;

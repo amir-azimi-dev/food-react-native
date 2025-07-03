@@ -5,7 +5,7 @@ const useDeleteProduct = () => {
     const client = useQueryClient();
 
     return useMutation({
-        mutationFn: async ({ id }: { id: string }) => {
+        mutationFn: async ({ id }: { id: number }) => {
             const { data, error } = await supabase.from("products").delete({ count: "exact" }).eq("id", id).select().single();
             if (error) throw new Error(error.message);
             return data;

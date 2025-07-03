@@ -1,9 +1,9 @@
 import { Text, Pressable, StyleSheet, Image } from 'react-native';
 import { Link, useSegments } from 'expo-router';
 import Colors from '@/constants/Colors';
-import { Product } from '@/types';
+import { Tables } from '@/types';
 
-const ProductCard = ({ id, name, price, image }: Product) => {
+const ProductCard = ({ id, name, price, image }: Tables<"products">) => {
     const segment = useSegments();
     const currentMode = segment[0] as "(admin)" | "(user)";
 
