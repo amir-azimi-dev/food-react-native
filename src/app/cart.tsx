@@ -1,15 +1,42 @@
-import React from 'react'
+import { useState } from 'react'
 import { View, Text, Platform, StyleSheet, FlatList, Pressable } from 'react-native'
+import { useNavigation, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useShoppingCart } from '@/Providers/CartProvider';
 import CartItem from '@/components/CartItem';
+import useCreateOrder from '@/hooks/orders/useCreateOrder';
+import { useAuth } from '@/Providers/AuthProvider';
 
 const ShoppingCart = () => {
+    const [isMutating, setIsMutating] = useState<boolean>(false);
+    const { mutate: checkoutOrder } = useCreateOrder();
+
     const cartContext = useShoppingCart();
+    const { session } = useAuth();
+    const router = useRouter();
+    const navigation = useNavigation();
 
     const checkoutOrderHandler = (): void => {
-        alert("Your order checked out successfully ...");
-        // ...
+        if (isMutating) return;
+        if (!cartContext.items.length || !session) return;
+
+        setIsMutating(true);
+
+        checkoutOrder(
+            { user_id: session.user.id, total: cartContext.totalPrice },
+            {
+                onSuccess: ({ id }) => {
+                    alert("Your order checked out successfully.");
+                    cartContext.clearCart();
+                    navigation.goBack();
+                    router.push(`/(user)/orders/${id}`);
+                },
+                onError: () => {
+                    setIsMutating(false);
+                    alert("Error while checking out your order.");
+                }
+            }
+        );
     };
 
     return (

@@ -7,7 +7,7 @@ const useCreateProduct = () => {
 
     return useMutation({
         mutationFn: async ({ name, price, image }: Omit<Product, "id">) => {
-            const { data, error } = await supabase.from("products").insert({ name, price, image }).single();
+            const { data, error } = await supabase.from("products").insert({ name, price, image }).select().single();
             if (error) throw new Error(error.message);
             return data;
         },

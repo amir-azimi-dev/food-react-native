@@ -19,10 +19,8 @@ const SignIn = () => {
         if (!isFormValid) return;
 
         setIsLoading(true);
-        const { data: { session, user }, error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
         setIsLoading(false);
-
-        console.log("user: ", user);
 
         if (error) return Alert.alert("Error", error.message, [{ text: "ok" }]);
 

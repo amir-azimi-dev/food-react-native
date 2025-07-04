@@ -7,13 +7,15 @@ export type CartContext = {
     totalPrice: number,
     onAddToCart: (item: CartItem) => void,
     onUpdateQuantity: (cartItemId: string, count: -1 | 1) => void;
+    clearCart: () => void;
 };
 
 const ShoppingCartContext = createContext<CartContext>({
     items: [],
     totalPrice: 0,
     onAddToCart: () => { },
-    onUpdateQuantity: () => { }
+    onUpdateQuantity: () => { },
+    clearCart: () => { }
 });
 
 export const useShoppingCart = (): CartContext => useContext(ShoppingCartContext);
@@ -63,8 +65,10 @@ const CartProvider = ({ children }: PropsWithChildren) => {
         });
     };
 
+    const clearCart = (): void => setItems([]);
+
     return (
-        <ShoppingCartContext.Provider value={{ items, totalPrice, onAddToCart, onUpdateQuantity }}>
+        <ShoppingCartContext.Provider value={{ items, totalPrice, onAddToCart, onUpdateQuantity, clearCart }}>
             {children}
         </ShoppingCartContext.Provider>
     )

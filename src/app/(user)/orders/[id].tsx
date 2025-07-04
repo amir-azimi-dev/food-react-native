@@ -1,23 +1,26 @@
-import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import orders from '@/../assets/data/orders';
-import { Order as OrderType } from '@/types';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import OrderItem from '@/components/OrderItem';
 import OrderItemProduct from '@/components/OrderItemProduct';
+import useUserSingleOrder from '@/hooks/orders/useUserSingleOrder';
+import { useAuth } from '@/Providers/AuthProvider';
 
 const Order = () => {
     const { id: orderId }: { id: string } = useLocalSearchParams();
 
-    const [order, setOrder] = useState<OrderType | null>(null);
+    const { session } = useAuth();
+    if (!session) return;
 
-    const router = useRouter();
+    const { data: order, error, isLoading } = useUserSingleOrder(parseInt(orderId), session.user.id);
 
-    useEffect(() => {
-        const targetOrder = orders.find(order => order.id === parseInt(orderId));
-        targetOrder ? setOrder(targetOrder) : router.push("/(user)/orders");
+    if (isLoading) return <ActivityIndicator style={{ flex: 1 }} />;
 
-    }, [orderId]);
+
+    if (error) return (
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <Text style={{ fontSize: 20, fontWeight: "bold" }}>Failed to fetch!</Text>
+        </View>
+    );
 
 
     return order ? (
@@ -26,13 +29,13 @@ const Order = () => {
 
             <OrderItem {...order} />
 
-            <View style={styles.productsContainer}>
+            {/* <View style={styles.productsContainer}>
                 <FlatList
                     data={order.order_items}
                     renderItem={({ item }) => <OrderItemProduct key={item.id} data={item} />}
                     contentContainerStyle={{ paddingHorizontal: 10 }}
                 />
-            </View>
+            </View> */}
 
             <Text style={styles.total}>Total: ${order.total}</Text>
         </View>
