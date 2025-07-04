@@ -23,13 +23,13 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
             if (!session) return;
 
 
-            const { data: { role } } = await supabase
+            const { data } = await supabase
                 .from("profiles")
                 .select("*")
                 .eq("id", session.user.id)
                 .single();
 
-            setUserRole(role);
+            data?.role && setUserRole(data.role as UserRole);
             setIsLoading(false);
         })();
 

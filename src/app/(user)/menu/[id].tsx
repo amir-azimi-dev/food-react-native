@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, Pressable, Dimensions, useWindowDimensio
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { PizzaSize } from '@/types';
 import { useShoppingCart } from '@/Providers/CartProvider';
-import useUserSingleProduct from '@/hooks/useUserSingleProduct';
+import useUserSingleProduct from '@/hooks/products/useUserSingleProduct';
 
 const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
 

@@ -5,7 +5,7 @@ import { useAuth } from "@/Providers/AuthProvider";
 import { supabase } from "@/libs/supabase";
 
 const index = () => {
-    const [isSigningOt, setIsSigningOut] = useState<boolean>(false);
+    const [isSigningOut, setIsSigningOut] = useState<boolean>(false);
     const { session, userRole, isLoading } = useAuth();
 
     const signOutHandler = async () => {
@@ -36,10 +36,10 @@ const index = () => {
                 </Pressable>
             </Link>
             <Pressable
-                style={[styles.button, { opacity: isSigningOt ? 0.4 : 1 }]}
+                style={[styles.button, { opacity: isSigningOut ? 0.4 : 1 }]}
                 onPress={signOutHandler}
             >
-                <Text style={styles.buttonText}>{isSigningOt ? "Signing Out ..." : "Sign Out"}</Text>
+                <Text style={styles.buttonText}>{isSigningOut ? "Signing Out ..." : "Sign Out"}</Text>
             </Pressable>
         </View>
     );

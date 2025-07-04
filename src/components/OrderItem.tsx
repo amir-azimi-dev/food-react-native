@@ -1,12 +1,12 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native'
 import { Link, useSegments } from 'expo-router';
-import { Order } from '@/types';
+import { Order, Tables } from '@/types';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(relativeTime);
 
-const OrderItem = ({ id, created_at, status }: Order) => {
+const OrderItem = ({ id, created_at, status }: Tables<"orders">) => {
     const segment = useSegments();
     const currentMode = segment[0] as "(user)" | "(admin)";
 

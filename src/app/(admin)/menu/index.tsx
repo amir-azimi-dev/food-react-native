@@ -1,6 +1,6 @@
 import { ActivityIndicator, FlatList, Text, View } from 'react-native';
 import ProductCard from '@/components/ProductCard';
-import useProductList from '@/hooks/useProductList';
+import useProductList from '@/hooks/products/useProductList';
 
 
 export default function ProductsList() {

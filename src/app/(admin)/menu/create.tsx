@@ -4,10 +4,10 @@ import { Stack, useRouter } from 'expo-router';
 import { useLocalSearchParams } from 'expo-router';
 import Colors from '@/constants/Colors';
 import { launchImageLibraryAsync } from 'expo-image-picker';
-import useCreateProduct from '@/hooks/useCreateProduct';
-import useEditProduct from '@/hooks/useEditProduct';
-import useAdminSingleProduct from '@/hooks/useAdminSingleProduct';
-import useDeleteProduct from '@/hooks/useDeleteProduct';
+import useCreateProduct from '@/hooks/products/useCreateProduct';
+import useEditProduct from '@/hooks/products/useEditProduct';
+import useAdminSingleProduct from '@/hooks/products/useAdminSingleProduct';
+import useDeleteProduct from '@/hooks/products/useDeleteProduct';
 
 const CreateProduct = () => {
     const { id: productId }: { id: string } = useLocalSearchParams();

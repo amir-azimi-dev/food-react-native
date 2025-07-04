@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Image, Dimensions, useWindowDimensions, ActivityIndicator } from 'react-native'
 import { Stack, useLocalSearchParams } from 'expo-router';
 import AdminHeaderRight from '@/components/AdminHeaderRight';
-import useAdminSingleProduct from '@/hooks/useAdminSingleProduct';
+import useAdminSingleProduct from '@/hooks/products/useAdminSingleProduct';
 
 
 const Product = () => {
