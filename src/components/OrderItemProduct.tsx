@@ -3,9 +3,9 @@ import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import { useRouter, useSegments } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
 import Colors from "../constants/Colors";
-import { OrderItem } from "../types";
+import { Tables } from "../types";
 
-const OrderItemProduct = ({ data }: { data: OrderItem }) => {
+const OrderItemProduct = ({ data }: { data: Tables<"order_items"> & { products: Tables<"products"> } }) => {
     const segment = useSegments();
     const currentMode = segment[0] as "(user)" | "(admin)";
 
@@ -26,9 +26,9 @@ const OrderItemProduct = ({ data }: { data: OrderItem }) => {
                     resizeMode="contain"
                 />
                 <View style={{ flex: 1 }}>
-                    <Text style={styles.title}>{data.product.name}</Text>
+                    <Text style={styles.title}>{data.products.name}</Text>
                     <View style={styles.subtitleContainer}>
-                        <Text style={styles.price}>${data.product.price.toFixed(2)}</Text>
+                        <Text style={styles.price}>${data.products.price.toFixed(2)}</Text>
                         <Text>Size: {data.size}</Text>
                     </View>
                 </View>

@@ -4,6 +4,7 @@ import OrderItem from '@/components/OrderItem';
 import OrderItemProduct from '@/components/OrderItemProduct';
 import useUserSingleOrder from '@/hooks/orders/useUserSingleOrder';
 import { useAuth } from '@/Providers/AuthProvider';
+import { Tables } from '@/types';
 
 const Order = () => {
     const { id: orderId }: { id: string } = useLocalSearchParams();
@@ -11,10 +12,9 @@ const Order = () => {
     const { session } = useAuth();
     if (!session) return;
 
-    const { data: order, error, isLoading } = useUserSingleOrder(parseInt(orderId), session.user.id);
+    const { data: orderData, error, isLoading } = useUserSingleOrder(parseInt(orderId), session.user.id);
 
     if (isLoading) return <ActivityIndicator style={{ flex: 1 }} />;
-
 
     if (error) return (
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -23,21 +23,21 @@ const Order = () => {
     );
 
 
-    return order ? (
+    return orderData ? (
         <View style={styles.container}>
             <Stack.Screen options={{ title: `Order #${orderId}` }} />
 
-            <OrderItem {...order} />
+            <OrderItem {...orderData} />
 
-            {/* <View style={styles.productsContainer}>
+            <View style={styles.productsContainer}>
                 <FlatList
-                    data={order.order_items}
-                    renderItem={({ item }) => <OrderItemProduct key={item.id} data={item} />}
+                    data={orderData.order_items}
+                    renderItem={({ item }) => <OrderItemProduct key={item.id} data={item as (Tables<"order_items"> & { products: Tables<"products"> })} />}
                     contentContainerStyle={{ paddingHorizontal: 10 }}
                 />
-            </View> */}
+            </View>
 
-            <Text style={styles.total}>Total: ${order.total}</Text>
+            <Text style={styles.total}>Total: ${orderData.total}</Text>
         </View>
     ) : (
         <View style={styles.container}>

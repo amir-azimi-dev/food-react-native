@@ -4,12 +4,14 @@ import { useNavigation, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useShoppingCart } from '@/Providers/CartProvider';
 import CartItem from '@/components/CartItem';
-import useCreateOrder from '@/hooks/orders/useCreateOrder';
+import useCreateOrder, { useCreateOrderItems } from '@/hooks/orders/useCreateOrder';
 import { useAuth } from '@/Providers/AuthProvider';
+import { Tables } from '@/types';
 
 const ShoppingCart = () => {
     const [isMutating, setIsMutating] = useState<boolean>(false);
     const { mutate: checkoutOrder } = useCreateOrder();
+    const { mutate: createOrderItems } = useCreateOrderItems();
 
     const cartContext = useShoppingCart();
     const { session } = useAuth();
@@ -25,8 +27,29 @@ const ShoppingCart = () => {
         checkoutOrder(
             { user_id: session.user.id, total: cartContext.totalPrice },
             {
-                onSuccess: ({ id }) => {
+                onSuccess: saveOrderItemsHandler,
+                onError: () => {
+                    setIsMutating(false);
+                    alert("Error while checking out your order.");
+                }
+            }
+        );
+    };
+
+    const saveOrderItemsHandler = ({ id }: Tables<"orders">): void => {
+        const orderItems = cartContext.items.map(item => ({
+            order_id: id,
+            product_id: parseFloat(item.id),
+            size: item.size,
+            quantity: item.quantity
+        }));
+
+        createOrderItems(
+            orderItems,
+            {
+                onSuccess: () => {
                     alert("Your order checked out successfully.");
+                    setIsMutating(false);
                     cartContext.clearCart();
                     navigation.goBack();
                     router.push(`/(user)/orders/${id}`);

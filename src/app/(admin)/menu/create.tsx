@@ -61,6 +61,7 @@ const CreateProduct = () => {
             {
                 onSuccess: () => {
                     alert("Product created successfully.");
+                    setIsMutating(false);
                     router.back();
                     resetForm();
                 },
@@ -85,11 +86,12 @@ const CreateProduct = () => {
             {
                 onSuccess: () => {
                     alert("Product modified successfully.");
+                    setIsMutating(false);
                     router.back();
                     resetForm();
                 },
                 onError: () => {
-                    setIsMutating(true);
+                    setIsMutating(false);
                     alert("Error while modifying product.");
                 }
             }

@@ -1,15 +1,14 @@
 import { supabase } from '@/libs/supabase';
 import { useQuery } from '@tanstack/react-query';
 
-const useUserSingleOrder = (orderId: number, userId: string) => {
+const useAdminSingleOrder = (orderId: number) => {
     return useQuery({
-        queryKey: ["user-order", orderId],
+        queryKey: ["admin-order", orderId],
         queryFn: async () => {
             const { data, error } = await supabase
                 .from("orders")
                 .select("*, order_items(*, products (*) )")
                 .eq("id", orderId)
-                .eq("user_id", userId)
                 .single();
             if (error) throw new Error(error.message);
             return data;
@@ -17,4 +16,4 @@ const useUserSingleOrder = (orderId: number, userId: string) => {
     });
 };
 
-export default useUserSingleOrder;
+export default useAdminSingleOrder;

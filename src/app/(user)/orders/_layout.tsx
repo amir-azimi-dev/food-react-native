@@ -9,6 +9,12 @@ const OrdersStack = () => {
                 title: "Orders"
             }}
         />
+        <Stack.Screen
+            name="[id]"
+            options={{
+                title: "Loading ..."
+            }}
+        />
     </Stack>
   )
 }

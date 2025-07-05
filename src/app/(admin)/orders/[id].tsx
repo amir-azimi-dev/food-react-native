@@ -1,43 +1,42 @@
-import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import orders from '@/../assets/data/orders';
-import { Order as OrderType } from '@/types';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import OrderItem from '@/components/OrderItem';
 import OrderItemProduct from '@/components/OrderItemProduct';
 import OrderStatusSelector from '@/components/OrderStatusSelector';
+import useAdminSingleOrder from '@/hooks/orders/useAdminSingleOrder';
+import { Tables } from '@/types';
 
 const Order = () => {
     const { id: orderId }: { id: string } = useLocalSearchParams();
 
-    const [order, setOrder] = useState<OrderType | null>(null);
+    const { data: orderData, error, isLoading } = useAdminSingleOrder(parseInt(orderId));
 
-    const router = useRouter();
+    if (isLoading) return <ActivityIndicator style={{ flex: 1 }} />;
 
-    useEffect(() => {
-        const targetOrder = orders.find(order => order.id === parseInt(orderId));
-        targetOrder ? setOrder(targetOrder) : router.push("/(user)/orders");
+    if (error) return (
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <Text style={{ fontSize: 20, fontWeight: "bold" }}>Failed to fetch!</Text>
+        </View>
+    );
 
-    }, [orderId]);
 
-
-    return order ? (
+    return orderData ? (
         <View style={styles.container}>
             <Stack.Screen options={{ title: `Order #${orderId}` }} />
 
-            <OrderItem {...order} />
+            <OrderItem {...orderData} />
 
             <View style={styles.productsContainer}>
                 <FlatList
-                    data={order.order_items}
-                    renderItem={({ item }) => <OrderItemProduct key={item.id} data={item} />}
+                    data={orderData.order_items}
+                    renderItem={({ item }) => <OrderItemProduct key={item.id} data={item as (Tables<"order_items"> & { products: Tables<"products"> })} />}
                     contentContainerStyle={{ paddingHorizontal: 10 }}
                 />
             </View>
 
-            <OrderStatusSelector orderStatus={order.status} />
+            <OrderStatusSelector orderStatus={orderData.status} />
 
-            <Text style={styles.total}>Total: ${order.total}</Text>
+            <Text style={styles.total}>Total: ${orderData.total}</Text>
         </View>
     ) : (
         <View style={styles.container}>

@@ -41,7 +41,7 @@ const CartProvider = ({ children }: PropsWithChildren) => {
 
                 return newShoppingCartItems;
             } else {
-                return [...prevItems, { ...newItem, id: randomUUID() }];
+                return [...prevItems, { ...newItem}];
             }
         });
     };

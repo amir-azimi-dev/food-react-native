@@ -1,10 +1,10 @@
 import { Pressable, StyleSheet, Text, View } from "react-native"
 import Colors from "@/constants/Colors"
-import { OrderStatus } from "@/types";
+import { OrderStatus, Tables } from "@/types";
 
 const orderStatusList: OrderStatus[] = ["New", "Cooking", "Delivering", "Delivered"];
 
-const OrderStatusSelector = ({ orderStatus }: { orderStatus: OrderStatus }) => {
+const OrderStatusSelector = ({ orderStatus }: { orderStatus: Tables<"orders">["status"] }) => {
     return (
         <>
             <Text style={styles.title}>Status</Text>

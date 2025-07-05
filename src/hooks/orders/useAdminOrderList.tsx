@@ -6,8 +6,14 @@ const useAdminOrderList = (isPending: boolean) => {
         useQuery({
             queryKey: ["admin-active-orders"],
             queryFn: async () => {
-                const { data, error } = await supabase.from("orders").select("*").neq("status", "Delivered");
-                if (error) throw new Error(error.message);
+                const { data, error } = await supabase
+                    .from("orders")
+                    .select("*")
+                    .neq("status", "Delivered")
+                    .order("created_at", { ascending: false });
+
+                if (error) throw new Error(error
+                    .message);
                 return data;
             }
         })

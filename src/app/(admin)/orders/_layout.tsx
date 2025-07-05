@@ -7,6 +7,12 @@ const OrdersStack = () => {
         name="list"
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name="[id]"
+        options={{
+          title: "Loading ..."
+        }}
+      />
     </Stack>
   )
 }

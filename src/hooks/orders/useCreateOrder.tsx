@@ -8,6 +8,7 @@ const useCreateOrder = () => {
     return useMutation({
         mutationFn: async ({ user_id, status, total }: InsertTable<"orders">) => {
             const { data, error } = await supabase.from("orders").insert({ user_id, status, total }).select().single();
+
             if (error) throw new Error(error.message);
             return data;
         },
@@ -20,4 +21,17 @@ const useCreateOrder = () => {
     });
 };
 
+const useCreateOrderItems = () => {
+
+    return useMutation({
+        mutationFn: async (orderItems: InsertTable<"order_items">[]) => {
+            const { data, error } = await supabase.from("order_items").insert(orderItems).select();
+
+            if (error) throw new Error(error.message);
+            return data;
+        }
+    });
+};
+
+export { useCreateOrderItems };
 export default useCreateOrder;

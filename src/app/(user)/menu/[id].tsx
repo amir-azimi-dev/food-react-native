@@ -22,7 +22,7 @@ const Product = () => {
         if (!product) return;
 
         const newItemData = {
-            id: "",
+            id,
             product,
             quantity: 1,
             size: selectedSize
