@@ -34,7 +34,7 @@ const Order = () => {
                 />
             </View>
 
-            <OrderStatusSelector orderStatus={orderData.status} />
+            <OrderStatusSelector {...orderData} />
 
             <Text style={styles.total}>Total: ${orderData.total}</Text>
         </View>
