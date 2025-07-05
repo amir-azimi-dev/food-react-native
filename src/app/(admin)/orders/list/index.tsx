@@ -1,10 +1,17 @@
-import { ActivityIndicator, FlatList, Text } from 'react-native'
-import OrderItem from '@/components/OrderItem';
-import useAdminOrderList from '@/hooks/orders/useAdminOrderList';
-import { View } from '@/components/Themed';
+import { ActivityIndicator, FlatList, Text } from "react-native"
+import OrderItem from "@/components/OrderItem";
+import { View } from "@/components/Themed";
+import useAdminOrderList from "@/hooks/orders/useAdminOrderList";
+import useAdminOrdersChannel from "@/hooks/supabaseChannels/useAdminOrdersChannel";
+import { useAuth } from "@/Providers/AuthProvider";
 
 const Orders = () => {
     const { data: orders, error, isLoading } = useAdminOrderList(true);
+
+    const { session } = useAuth();
+    if (!session) return;
+
+    useAdminOrdersChannel();
 
     if (isLoading) return <ActivityIndicator style={{ flex: 1 }} />;
 

@@ -5,6 +5,7 @@ import OrderItemProduct from '@/components/OrderItemProduct';
 import useUserSingleOrder from '@/hooks/orders/useUserSingleOrder';
 import { useAuth } from '@/Providers/AuthProvider';
 import { Tables } from '@/types';
+import useUserOrderUpdatesChannel from '@/hooks/supabaseChannels/useUserOrderUpdatesChannel';
 
 const Order = () => {
     const { id: orderId }: { id: string } = useLocalSearchParams();
@@ -13,6 +14,7 @@ const Order = () => {
     if (!session) return;
 
     const { data: orderData, error, isLoading } = useUserSingleOrder(parseInt(orderId), session.user.id);
+    useUserOrderUpdatesChannel([parseInt(orderId)]);
 
     if (isLoading) return <ActivityIndicator style={{ flex: 1 }} />;
 
