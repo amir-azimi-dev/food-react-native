@@ -6,10 +6,13 @@ import Colors from '../constants/Colors';
 import { FontAwesome } from '@expo/vector-icons';
 import { CartItem as CartItemType } from '../types';
 import { useShoppingCart } from '@/Providers/CartProvider';
+import useProductImage from '@/hooks/useProductImage';
 
 const CartItem = ({ data }: { data: CartItemType }) => {
     const router = useRouter();
     const navigation = useNavigation();
+
+    const [imageUrl] = useProductImage(data.product.image);
 
     const { onUpdateQuantity } = useShoppingCart();
 
@@ -22,7 +25,7 @@ const CartItem = ({ data }: { data: CartItemType }) => {
         <View style={styles.container}>
             <Pressable style={styles.productDetailsContainer} onPress={showProductDetailsHandler}>
                 <Image
-                    source={{ uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7HE8d6CHpgkSQUqUqkZbUFi_5N_LJ0FYeUA&s" }}
+                    source={{ uri: imageUrl as (string | null) || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7HE8d6CHpgkSQUqUqkZbUFi_5N_LJ0FYeUA&s" }}
                     style={styles.image}
                     resizeMode="contain"
                 />
@@ -78,6 +81,7 @@ const styles = StyleSheet.create({
         aspectRatio: 1,
         alignSelf: 'center',
         marginRight: 10,
+        borderRadius: 1000
     },
     title: {
         fontWeight: '500',

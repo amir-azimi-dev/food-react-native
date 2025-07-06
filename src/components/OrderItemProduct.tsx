@@ -4,24 +4,27 @@ import { useRouter, useSegments } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
 import Colors from "../constants/Colors";
 import { Tables } from "../types";
+import useProductImage from "@/hooks/useProductImage";
 
 const OrderItemProduct = ({ data }: { data: Tables<"order_items"> & { products: Tables<"products"> } }) => {
     const segment = useSegments();
     const currentMode = segment[0] as "(user)" | "(admin)";
+
+    const [imageUrl] = useProductImage(data.products.image);
 
     const router = useRouter();
     const navigation = useNavigation();
 
     const showProductDetailsHandler = () => {
         navigation.goBack();
-        router.push(`/${currentMode}/menu/${data.product_id}`);
+        router.push(`/${currentMode}/menu/${data.products.id}`);
     };
 
     return (
         <View style={styles.container}>
             <Pressable style={styles.productDetailsContainer} onPress={showProductDetailsHandler}>
                 <Image
-                    source={{ uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7HE8d6CHpgkSQUqUqkZbUFi_5N_LJ0FYeUA&s" }}
+                    source={{ uri: imageUrl as (string | null) || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7HE8d6CHpgkSQUqUqkZbUFi_5N_LJ0FYeUA&s" }}
                     style={styles.image}
                     resizeMode="contain"
                 />
@@ -61,6 +64,7 @@ const styles = StyleSheet.create({
         aspectRatio: 1,
         alignSelf: "center",
         marginRight: 10,
+        borderRadius: 1000
     },
     title: {
         fontWeight: "500",
