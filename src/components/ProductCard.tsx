@@ -2,16 +2,19 @@ import { Text, Pressable, StyleSheet, Image } from 'react-native';
 import { Link, useSegments } from 'expo-router';
 import Colors from '@/constants/Colors';
 import { Tables } from '@/types';
+import useProductImage from '@/hooks/useProductImage';
 
 const ProductCard = ({ id, name, price, image }: Tables<"products">) => {
     const segment = useSegments();
     const currentMode = segment[0] as "(admin)" | "(user)";
 
+    const [imageUrl] = useProductImage(image);
+
     return (
         <Link href={{ pathname: `/${currentMode}/menu/[id]`, params: { id } }} style={styles.link} asChild>
             <Pressable style={styles.container}>
                 <Image
-                    source={{ uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7HE8d6CHpgkSQUqUqkZbUFi_5N_LJ0FYeUA&s" }}
+                    source={{ uri: imageUrl as (string | null) || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7HE8d6CHpgkSQUqUqkZbUFi_5N_LJ0FYeUA&s" }}
                     // source={image ? { uri: image } : require("@/../assets/images/pepperoni.jpeg")}
                     // source={require("@/../assets/images/pepperoni.jpeg")}
                     resizeMode="contain"
@@ -41,6 +44,7 @@ const styles = StyleSheet.create({
     image: {
         maxWidth: "100%",
         aspectRatio: 1,
+        borderRadius: 1000
     },
     title: {
         fontSize: 16,

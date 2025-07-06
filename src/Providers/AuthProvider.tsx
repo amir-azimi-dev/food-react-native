@@ -41,8 +41,6 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
             .eq("id", userId)
             .single();
 
-        console.log(data, "***")
-
         data?.role && setUserRole(data.role as UserRole);
     };
 

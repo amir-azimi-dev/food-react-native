@@ -4,6 +4,7 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { PizzaSize } from '@/types';
 import { useShoppingCart } from '@/Providers/CartProvider';
 import useUserSingleProduct from '@/hooks/products/useUserSingleProduct';
+import useProductImage from '@/hooks/useProductImage';
 
 const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
 
@@ -12,11 +13,11 @@ const Product = () => {
 
     const [selectedSize, setSelectedSize] = useState<PizzaSize>("M");
     const { data: product, error, isLoading } = useUserSingleProduct(parseInt(id));
+    const [imageUrl] = useProductImage(product?.image);
 
     const { height } = useWindowDimensions();
     const { onAddToCart } = useShoppingCart();
     const router = useRouter();
-
 
     const addToCartHandler = (): void => {
         if (!product) return;
@@ -46,7 +47,7 @@ const Product = () => {
 
             <Image
                 // source={image ? { uri: image } : require("@/../assets/images/pepperoni.jpeg")}
-                source={{ uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7HE8d6CHpgkSQUqUqkZbUFi_5N_LJ0FYeUA&s" }}
+                source={{ uri: imageUrl as (string | null) || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7HE8d6CHpgkSQUqUqkZbUFi_5N_LJ0FYeUA&s" }}
                 resizeMode="contain"
                 style={[styles.productImage, { maxHeight: height / 2 }]}
             />
@@ -101,7 +102,8 @@ const styles = StyleSheet.create({
         width: "100%",
         maxHeight: Dimensions.get("window").height / 2,
         aspectRatio: 1,
-        marginHorizontal: "auto"
+        marginHorizontal: "auto",
+        borderRadius: 1000
     },
 
     title: {

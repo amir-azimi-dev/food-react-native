@@ -4,21 +4,26 @@ import { Stack, useRouter } from 'expo-router';
 import { useLocalSearchParams } from 'expo-router';
 import Colors from '@/constants/Colors';
 import { launchImageLibraryAsync } from 'expo-image-picker';
+import { readAsStringAsync } from 'expo-file-system';
+import { decode } from 'base64-arraybuffer';
 import useCreateProduct from '@/hooks/products/useCreateProduct';
 import useEditProduct from '@/hooks/products/useEditProduct';
 import useAdminSingleProduct from '@/hooks/products/useAdminSingleProduct';
 import useDeleteProduct from '@/hooks/products/useDeleteProduct';
+import { randomUUID } from 'expo-crypto';
+import { supabase } from '@/libs/supabase';
+import useProductImage from '@/hooks/useProductImage';
 
 const CreateProduct = () => {
     const { id: productId }: { id: string } = useLocalSearchParams();
 
     const [isMutating, setIsMutating] = useState<boolean>(false);
-    const [image, setImage] = useState<string | null>(null);
     const [name, setName] = useState<string>("");
     const [price, setPrice] = useState<string>("");
     const [errors, setErrors] = useState<string[]>([]);
 
     const { data: targetProduct } = useAdminSingleProduct(parseInt(productId));
+    const [image, setImage] = useProductImage(targetProduct?.image) as [string | null, React.Dispatch<React.SetStateAction<string | null>>];
     const { mutate: createProduct } = useCreateProduct();
     const { mutate: editProduct } = useEditProduct();
     const { mutate: deleteProduct } = useDeleteProduct();
@@ -27,15 +32,16 @@ const CreateProduct = () => {
     const router = useRouter();
 
     useEffect(() => {
-        if (!targetProduct) return;
+        if (!targetProduct?.image) return;
 
-        setImage(targetProduct.image);
         setName(targetProduct.name);
         setPrice(targetProduct.price.toString());
 
-    }, [targetProduct]);
+    }, [targetProduct?.id]);
 
     const pickImage = async () => {
+        if (isMutating) return;
+
         let result = await launchImageLibraryAsync({
             mediaTypes: ["images"],
             allowsEditing: true,
@@ -48,7 +54,7 @@ const CreateProduct = () => {
 
     const submitFormHandler = () => productId ? updateProductHandler() : createProductHandler();
 
-    const createProductHandler = () => {
+    const createProductHandler = async () => {
         if (isMutating) return;
 
         const isFormValid = validateForm();
@@ -56,8 +62,12 @@ const CreateProduct = () => {
 
         setIsMutating(true);
 
+        const imagePath = await uploadImageHandler();
+        if (image && !imagePath) return;
+
+
         createProduct(
-            { name, price: parseFloat(price), image },
+            { name, price: parseFloat(price), image: imagePath || null },
             {
                 onSuccess: () => {
                     alert("Product created successfully.");
@@ -73,7 +83,7 @@ const CreateProduct = () => {
         );
     };
 
-    const updateProductHandler = () => {
+    const updateProductHandler = async () => {
         if (isMutating) return;
 
         const isFormValid = validateForm();
@@ -81,8 +91,11 @@ const CreateProduct = () => {
 
         setIsMutating(true);
 
+        const imagePath = await uploadImageHandler();
+        if (image && !imagePath) return;
+
         editProduct(
-            { id: parseInt(productId), name, price: parseFloat(price), image },
+            { id: parseInt(productId), name, price: parseFloat(price), image: imagePath || null },
             {
                 onSuccess: () => {
                     alert("Product modified successfully.");
@@ -112,6 +125,22 @@ const CreateProduct = () => {
         setErrors(newErrors);
         const isFormValid = newErrors.length ? false : true;
         return isFormValid;
+    };
+
+    const uploadImageHandler = async (): Promise<string | false> => {
+        if (!image || !image.startsWith("file://")) return false;
+
+        const base64 = await readAsStringAsync(image, { encoding: "base64" });
+        const fileName = randomUUID() + image.split("/").at(-1);
+        const contentType = `image/${image.split(".").at(-1)}`;
+
+        const { data, error } = await supabase.storage.from("product-images").upload(fileName, decode(base64), { contentType })
+        if (error) {
+            alert(error.message);
+            return false;
+        }
+
+        return data.path;
     };
 
     const removeProductHandler = (): void => {
@@ -166,7 +195,7 @@ const CreateProduct = () => {
                 source={{ uri: image || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7HE8d6CHpgkSQUqUqkZbUFi_5N_LJ0FYeUA&s" }}
                 style={[styles.image, { maxHeight: height / 3 }]}
             />
-            <Text style={styles.selectImage} onPress={pickImage}>Select Image</Text>
+            <Text style={[styles.selectImage, { opacity: isMutating ? 0.4 : 1 }]} onPress={pickImage}>Select Image</Text>
 
             <View style={styles.inputContainer}>
                 <Text style={styles.label}>title</Text>
