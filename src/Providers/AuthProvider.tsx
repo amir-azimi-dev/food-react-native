@@ -23,19 +23,28 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
             if (!session) return;
 
 
-            const { data } = await supabase
-                .from("profiles")
-                .select("*")
-                .eq("id", session.user.id)
-                .single();
-
-            data?.role && setUserRole(data.role as UserRole);
+            await setUserRoleHandler(session.user.id);
             setIsLoading(false);
         })();
 
-        supabase.auth.onAuthStateChange((_, session) => setSession(session));
+        supabase.auth.onAuthStateChange((_, session) => {
+            setSession(session);
+            session?.user && setUserRoleHandler(session.user.id);
+        });
 
     }, []);
+
+    const setUserRoleHandler = async (userId: string) => {
+        const { data } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", userId)
+            .single();
+
+        console.log(data, "***")
+
+        data?.role && setUserRole(data.role as UserRole);
+    };
 
     return (
         <AuthContext.Provider value={{ session, isLoading, userRole }}>
