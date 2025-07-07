@@ -20,7 +20,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
 
             setSession(error ? null : session);
 
-            if (!session) return;
+            if (!session) return setIsLoading(false);
 
 
             await setUserRoleHandler(session.user.id);
