@@ -7,6 +7,7 @@ import CartItem from '@/components/CartItem';
 import useCreateOrder, { useCreateOrderItems } from '@/hooks/orders/useCreateOrder';
 import { useAuth } from '@/Providers/AuthProvider';
 import { Tables } from '@/types';
+import { initializePaymentSheet, openPaymentSheet } from '@/libs/stripe';
 
 const ShoppingCart = () => {
     const [isMutating, setIsMutating] = useState<boolean>(false);
@@ -18,11 +19,15 @@ const ShoppingCart = () => {
     const router = useRouter();
     const navigation = useNavigation();
 
-    const checkoutOrderHandler = (): void => {
+    const checkoutOrderHandler = async (): Promise<void> => {
         if (isMutating) return;
         if (!cartContext.items.length || !session) return;
 
         setIsMutating(true);
+
+        await initializePaymentSheet(Math.floor(cartContext.totalPrice * 100));
+        const isPaymentSuccessful = await openPaymentSheet();
+        if (!isPaymentSuccessful) return setIsMutating(false);
 
         checkoutOrder(
             { user_id: session.user.id, total: cartContext.totalPrice },
@@ -76,8 +81,8 @@ const ShoppingCart = () => {
                     />
 
                     <Text style={styles.totalPrice}>Total Price: ${cartContext.totalPrice}</Text>
-                    <Pressable style={styles.button} onPress={checkoutOrderHandler}>
-                        <Text style={styles.buttonText}>Checkout</Text>
+                    <Pressable style={[styles.button, { opacity: isMutating ? 0.4 : 1 }]} onPress={checkoutOrderHandler}>
+                        <Text style={styles.buttonText}>{isMutating ? "Checking out ..." : "Checkout"}</Text>
                     </Pressable>
                 </>
             ) : (
