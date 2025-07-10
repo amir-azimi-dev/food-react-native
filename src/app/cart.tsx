@@ -25,7 +25,8 @@ const ShoppingCart = () => {
 
         setIsMutating(true);
 
-        await initializePaymentSheet(Math.floor(cartContext.totalPrice * 100));
+        const isPaymentReady = await initializePaymentSheet(Math.floor(cartContext.totalPrice * 100));
+        if (!isPaymentReady) return setIsMutating(false);
         const isPaymentSuccessful = await openPaymentSheet();
         if (!isPaymentSuccessful) return setIsMutating(false);
 
