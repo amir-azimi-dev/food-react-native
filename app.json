@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "project",
-    "slug": "project",
+    "name": "food project",
+    "slug": "food-project",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -33,6 +33,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "e27ca90c-79c8-48dd-aa3f-b8879725695c"
+      }
     }
   }
 }
