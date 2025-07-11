@@ -10,6 +10,7 @@ import CartProvider from '@/Providers/CartProvider';
 import AuthProvider from '@/Providers/AuthProvider';
 import QueryProvider from '@/Providers/QueryProvider';
 import { StripeProvider } from '@stripe/stripe-react-native';
+import PushNotificationProvider from '@/Providers/PushNotificationProvider';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -55,21 +56,23 @@ function RootLayoutNav() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <AuthProvider>
         <QueryProvider>
-          <CartProvider>
-            <StripeProvider
-              publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""}
-            >
-              <Stack>
-                <Stack.Screen name="index" options={{ headerShown: false }} />
-                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-                <Stack.Screen name="(user)" options={{ headerShown: false }} />
-                <Stack.Screen name="(admin)" options={{ headerShown: false }} />
-                <Stack.Screen name="cart" options={{ presentation: 'modal' }} />
-              </Stack>
-            </StripeProvider>
-          </CartProvider>
+          <PushNotificationProvider>
+            <CartProvider>
+              <StripeProvider
+                publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""}
+              >
+                <Stack>
+                  <Stack.Screen name="index" options={{ headerShown: false }} />
+                  <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                  <Stack.Screen name="(user)" options={{ headerShown: false }} />
+                  <Stack.Screen name="(admin)" options={{ headerShown: false }} />
+                  <Stack.Screen name="cart" options={{ presentation: 'modal' }} />
+                </Stack>
+              </StripeProvider>
+            </CartProvider>
+          </PushNotificationProvider>
         </QueryProvider>
       </AuthProvider>
     </ThemeProvider>
   );
-}
+};

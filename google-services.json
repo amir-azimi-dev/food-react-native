@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "356877401515",
+    "project_id": "push-notification-f92c9",
+    "storage_bucket": "push-notification-f92c9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:356877401515:android:081e0e0315f88f42f0a6ee",
+        "android_client_info": {
+          "package_name": "com.amirazimidev.foodproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUMQm7Xe9msB_KoYL4u2Wogl0dt0gwgqE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
