@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { Text, Pressable, StyleSheet, Alert, View, ActivityIndicator } from 'react-native'
 
 const profile = () => {
-    const { session, userRole, isLoading } = useAuth();
+    const { session, isLoading } = useAuth();
     const [isSigningOut, setIsSigningOut] = useState<boolean>(false);
 
 
@@ -26,13 +26,11 @@ const profile = () => {
         <View style={styles.container}>
             <Text style={styles.emailTitle}>Your Email: <Text style={styles.email}>{session?.user.email}</Text></Text>
 
-            {userRole === "ADMIN" && (
-                <Link href="/(admin)/menu" style={styles.button} asChild>
-                    <Pressable style={[styles.button, { opacity: isSigningOut ? 0.4 : 1 }]}>
-                        <Text style={styles.buttonText}>Go to Admin Panel</Text>
-                    </Pressable>
-                </Link>
-            )}
+            <Link href="/(user)/menu" style={styles.button} asChild>
+                <Pressable style={[styles.button, { opacity: isSigningOut ? 0.4 : 1 }]}>
+                    <Text style={styles.buttonText}>Go to User Panel</Text>
+                </Pressable>
+            </Link>
 
             <Pressable
                 style={[styles.button, { opacity: isSigningOut ? 0.4 : 1 }]}
